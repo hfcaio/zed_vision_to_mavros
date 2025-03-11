@@ -6,7 +6,7 @@ if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
 endif()
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic )
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 
@@ -18,16 +18,21 @@ find_package(rclcpp REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 # Include Cpp "include" directory
 #include_directories(include)
 
 # Create Cpp executable
 add_executable(zed_vision_to_mavros src/zed_vision_to_mavros.cpp)
-ament_target_dependencies(zed_vision_to_mavros rclcpp geometry_msgs tf2 tf2_ros)
+ament_target_dependencies(zed_vision_to_mavros rclcpp geometry_msgs tf2 tf2_ros tf2_geometry_msgs)
+
+add_executable(transform_frames src/transform_frames.cpp)
+ament_target_dependencies(transform_frames rclcpp geometry_msgs tf2 tf2_ros)
 
 # Install Cpp executables
 install(TARGETS
+  transform_frames
   zed_vision_to_mavros
   DESTINATION lib/${PROJECT_NAME}
 )
