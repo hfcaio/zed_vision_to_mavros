@@ -24,7 +24,7 @@ public:
     tf_listener_ = std::make_shared<tf2_ros::TransformListener>(*tf_buffer_);
 
     mavros_pub_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("mavros/vision_pose/pose", 10);
-    zed_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>("/zed/pose", 10, std::bind(&ZedConversion::zed_callback, this, std::placeholders::_1));
+    zed_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>("/zed/zed_node/pose", 10, std::bind(&ZedConversion::zed_callback, this, std::placeholders::_1));
   }
 
 private:
