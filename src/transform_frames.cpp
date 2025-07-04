@@ -24,17 +24,20 @@ private:
   {
     geometry_msgs::msg::TransformStamped transform;
     transform.header.stamp = this->get_clock()->now();
-    transform.header.frame_id = "base_link";
+    transform.header.frame_id = "odom";
     transform.child_frame_id = "zed_camera_center";
 
     transform.transform.translation.x = 0.0;
     transform.transform.translation.y = 0.0;
     transform.transform.translation.z = 0.0;
 
-    transform.transform.rotation.x = 1.0;
-    transform.transform.rotation.y = 0.0;
-    transform.transform.rotation.z = 0.0;
-    transform.transform.rotation.w = 0.0;
+    tf2::Quaternion q;
+    q.setRPY(0, 0, 0); // sem rotação
+
+    transform.transform.rotation.x = q.x();
+    transform.transform.rotation.y = q.y();
+    transform.transform.rotation.z = q.z();
+    transform.transform.rotation.w = q.w();
 
     tf_static_broadcaster_->sendTransform(transform);
   }

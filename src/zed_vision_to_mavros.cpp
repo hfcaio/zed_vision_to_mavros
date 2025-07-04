@@ -36,15 +36,20 @@ private:
   void zed_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
   {
     geometry_msgs::msg::PoseStamped mavros_msg;
-    mavros_msg.header.frame_id = "base_link";
+    const std::string target_frame = "odom";               // frame fixo
+    const std::string source_frame = msg->header.frame_id; // provavelmente "zed_camera_center"
     try
     {
-      if (!tf_buffer_->canTransform("zed_camera_center", "base_link", tf2::TimePointZero))
+      if (!tf_buffer_->canTransform(source_frame, target_frame, tf2::TimePointZero))
       {
-        RCLCPP_ERROR_ONCE(this->get_logger(), "Could not get transform from zed_camera_center to base_link");
+        RCLCPP_ERROR_ONCE(this->get_logger(),
+                          "Could not get transform from %s to %s",
+                          source_frame.c_str(), target_frame.c_str());
         return;
       }
-      tf_buffer_->transform<geometry_msgs::msg::PoseStamped>(*msg, mavros_msg, "base_link", tf2::Duration(std::chrono::seconds(1)));
+      tf_buffer_->transform<geometry_msgs::msg::PoseStamped>(*msg, mavros_msg, target_frame, tf2::Duration(std::chrono::seconds(1)));
+      mavros_msg.header.frame_id = target_frame;          // set the frame_id to the target frame
+      mavros_msg.header.stamp = this->get_clock()->now(); // update the timestamp
       mavros_pub_->publish(mavros_msg);
     }
     catch (tf2::TransformException &ex)
